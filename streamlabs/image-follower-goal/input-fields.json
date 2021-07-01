@@ -1,0 +1,30 @@
+"customField1": {
+"label": "Background Image",
+"type": "image-input",
+"value": ""
+},
+"customField2": {
+"label": "Foreground Image",
+"type": "image-input",
+"value": ""
+},
+"customField3": {
+"label": "Goal Title",
+"type": "textfield",
+"value": "Follower Goal"
+},
+"customField4": {
+"label": "Text Colour",
+"type": "colorpicker",
+"value": "#000000"
+},
+"customField5": {
+"label": "Text Border",
+"type": "colorpicker",
+"value": "#FFFFFF"
+},
+"customField6": {
+"label": "Text Vertical Offset (in pixels)",
+"type": "textfield",
+"value": "0"
+},
