@@ -8,13 +8,34 @@ function initProgressBar(obj) {
   var foregroundImg = obj.detail.settings.custom_json.customField2.value;
   $("#goal-progress-img").css("background-image", "url("+foregroundImg+")");
 
-  updateProgressBar(obj);
+  updateGoalFollowers(obj, false);
 }
 
-function updateProgressBar(obj)
-{
+var firstTime = true;
+var updateRate = 10000;
+var currentFollowersUpdate = 0.0;
+var currentFollowers = 0;
+var targetFollowers = 0;
+function updateGoalFollowers(obj, setUpdatePoint) {
+  currentFollowers = obj.detail.amount.current;
+  targetFollowers = obj.detail.amount.target;
+  if (setUpdatePoint) {
+		currentFollowersUpdate = obj.detail.amount.current; 
+  }
+}
+
+function updateLoop() {
+  if (currentFollowersUpdate >= currentFollowers && !firstTime) {
+      return;
+  }
+  firstTime = false;
+  
+  console.log(currentFollowers);
+  console.log("current followers update: " + currentFollowersUpdate);
+  currentFollowersUpdate += currentFollowers / updateRate;
+  
   var progressBar = $("#goal-progress");
-  var percentProgress = obj.detail.amount.current / obj.detail.amount.target * 100;
+  var percentProgress = currentFollowersUpdate / targetFollowers * 100;
   progressBar.css("width", percentProgress+"%");
 }
 
@@ -31,8 +52,8 @@ document.addEventListener('goalLoad', function(obj) {
   $(".goal-cont").css("width", window.innerWidth);
   $(".goal-cont").css("height", window.innerHeight);
   $("#goal-progress-img").css("width", window.innerWidth);
- $("#goal-progress-img").css("height", window.innerHeight);
-  
+ 	$("#goal-progress-img").css("height", window.innerHeight);
+	
   // set text colours
   $("#title").text(obj.detail.settings.custom_json.customField3.value);
   $("*").css("color", obj.detail.settings.custom_json.customField4.value);
@@ -40,11 +61,16 @@ document.addEventListener('goalLoad', function(obj) {
   var textOutlineColour = obj.detail.settings.custom_json.customField5.value;
   $("*").css("text-shadow", "-1px -1px 0 "+textOutlineColour+", 1px -1px 0 "+textOutlineColour+", -1px 1px 0 "+textOutlineColour+", 1px 1px 0 "+textOutlineColour+"");
   $("#info-cont").css("transform", "translate(0, "+obj.detail.settings.custom_json.customField6.value+"px");
+
+  updateGoalFollowers(obj, true);
+
+  // start the update loop
+  setInterval(updateLoop, 1 / 60);
 });
 
 document.addEventListener('goalEvent', function(obj) {
   // obj.detail will contain information about the goal
   console.log(obj.detail);
   $('#goal-current').text(obj.detail.amount.current);
-	updateProgressBar(obj);
+  updateGoalFollowers(obj, false);
 });
