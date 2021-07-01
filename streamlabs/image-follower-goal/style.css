@@ -1,0 +1,52 @@
+/* All html objects will be wrapped in the #wrap div */
+* {
+  /* hard-coded tex*/
+ 	font-size: 1em;
+}
+
+.goal-cont {
+  color: white;
+  background: black;
+	position: relative;
+}
+
+#info-cont {
+ 	height: 100%;
+  width: 100%;
+  position: absolute;
+  z-index: 1;
+}
+
+#title {
+	position: relative;
+  left: 0;
+  top: 0;
+}
+
+#goal-info {
+  right: 0;
+  top: 0;
+  position: absolute;
+}
+
+#goal-bar {
+ 	width: 100%;
+	height: 100%;
+  position: relative;
+  z-index: 0;
+}
+
+#goal-background, #goal-progress {
+  position: absolute;
+  background-size: cover;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+}
+
+#goal-progress-img {
+  background-size: cover;
+  border: 0;
+}
