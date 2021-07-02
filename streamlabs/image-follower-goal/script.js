@@ -49,23 +49,26 @@ document.addEventListener('goalLoad', function(obj) {
   $('#goal-end-date').text(obj.detail.to_go.ends_at);
 	initProgressBar(obj);
   
-  $(".goal-cont").css("width", window.innerWidth);
-  $(".goal-cont").css("height", window.innerHeight);
+  //$(".goal-cont").css("width", window.innerWidth);
+  //$(".goal-cont").css("height", window.innerHeight);
   $("#goal-progress-img").css("width", window.innerWidth);
  	$("#goal-progress-img").css("height", window.innerHeight);
+  $("#goal-background").css("width", window.innerWidth);
+ 	$("#goal-background").css("height", window.innerHeight);
 	
-  // set text colours
   $("#title").text(obj.detail.settings.custom_json.customField3.value);
-  $("*").css("color", obj.detail.settings.custom_json.customField4.value);
-  
-  var textOutlineColour = obj.detail.settings.custom_json.customField5.value;
-  $("*").css("text-shadow", "-1px -1px 0 "+textOutlineColour+", 1px -1px 0 "+textOutlineColour+", -1px 1px 0 "+textOutlineColour+", 1px 1px 0 "+textOutlineColour+"");
   $("#info-cont").css("transform", "translate(0, "+obj.detail.settings.custom_json.customField6.value+"px");
+  
+  // set text-related styling
+   $(".text").css("color", obj.detail.settings.custom_json.customField4.value);
+   var textOutlineColour = obj.detail.settings.custom_json.customField5.value;
+   $(".text").css("text-shadow", "-1px -1px 0 "+textOutlineColour+", 1px -1px 0 "+textOutlineColour+", -1px 1px 0 "+textOutlineColour+", 1px 1px 0 "+textOutlineColour+"");
+	 $(".text").css("font-family", obj.detail.settings.font);
 
-  updateGoalFollowers(obj, true);
+	updateGoalFollowers(obj, true);
 
-  // start the update loop
-  setInterval(updateLoop, 1 / 60);
+	// start the update loop
+	setInterval(updateLoop, 1 / 60);
 });
 
 document.addEventListener('goalEvent', function(obj) {
