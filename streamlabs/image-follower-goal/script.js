@@ -1,13 +1,33 @@
 // Events will be sent when someone followers
 // Please use event listeners to run functions.
+function isVideoFile(src) {
+  return src.endsWith(".webm");
+}
+
+var progressElem = "";
+function setProgressBar(elem, src) {
+  var imgElem = elem + "-img";
+  var vidElem = elem + "-vid";
+
+  if (isVideoFile(src)) {
+    $(vidElem).attr("src", src); 
+    // hide the other child since we're showing an vid instead of img
+    $(imgElem).css("display", "none");
+  } else {
+    $(imgElem).css("background-image", "url("+src+")");  
+    // hide the other child since we're showing an image instead of vid
+    $(vidElem).css("display", "none");
+  }  
+}
 
 function initProgressBar(obj) {
   var backgroundImg = obj.detail.settings.custom_json.customField1.value;
-  $("#goal-background").css("background-image", "url("+backgroundImg+")");
+  //$("#goal-background").css("background-image", "url("+backgroundImg+")");
   
   var foregroundImg = obj.detail.settings.custom_json.customField2.value;
-  $("#goal-progress-img").css("background-image", "url("+foregroundImg+")");
-
+  //$("#goal-progress-img").css("background-image", "url("+foregroundImg+")");
+  setProgressBar("#goal-background", backgroundImg);
+  setProgressBar("#goal-progress", foregroundImg);
   updateGoalFollowers(obj, false);
 }
 
@@ -29,12 +49,12 @@ function updateLoop() {
       return;
   }
   firstTime = false;
-  
-  console.log(currentFollowers);
-  console.log("current followers update: " + currentFollowersUpdate);
   currentFollowersUpdate += currentFollowers / updateRate;
-  
-  var progressBar = $("#goal-progress");
+
+  // the progress bar update uses the container, this is
+  // because we want to crop the contents rather then
+  // scale them.
+  var progressBar = $("#goal-progress-cont");
   var percentProgress = currentFollowersUpdate / targetFollowers * 100;
   progressBar.css("width", percentProgress+"%");
 }
@@ -53,9 +73,13 @@ document.addEventListener('goalLoad', function(obj) {
   //$(".goal-cont").css("height", window.innerHeight);
   $("#goal-progress-img").css("width", window.innerWidth);
  	$("#goal-progress-img").css("height", window.innerHeight);
-  $("#goal-background").css("width", window.innerWidth);
- 	$("#goal-background").css("height", window.innerHeight);
-	
+  $("#goal-progress-vid").css("width", window.innerWidth);
+ 	$("#goal-progress-vid").css("height", window.innerHeight);
+  $("#goal-background-img").css("width", window.innerWidth);
+ 	$("#goal-background-img").css("height", window.innerHeight);
+  $("#goal-background-vid").css("width", window.innerWidth);
+ 	$("#goal-background-vid").css("height", window.innerHeight);
+  
   $("#title").text(obj.detail.settings.custom_json.customField3.value);
   $("#info-cont").css("transform", "translate(0, "+obj.detail.settings.custom_json.customField6.value+"px");
   
