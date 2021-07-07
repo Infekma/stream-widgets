@@ -28,9 +28,9 @@
 }
 
 #goal-info {
+  position: absolute;
   right: 0;
   top: 0;
-  position: absolute;
 }
 
 #goal-bar {
@@ -40,7 +40,7 @@
   z-index: 0;
 }
 
-#goal-background-cont, #goal-progress-cont {
+.container {
   position: absolute;
   top: 0;
   left: 0;
@@ -49,18 +49,11 @@
   overflow: hidden;
 }
 
-#goal-progress-cont, #goal-background-cont {
-  position: absolute;
-}
-
-#goal-progress-img, #goal-progress-vid, #goal-background-img, #goal-background-vid {
+.video {
+  object-fit: fill;
   border: 0;
-  width: 100%;
-  height: 100%;
-  background-size: 100% 100%;
 }
 
-#goal-progress-vid, #goal-background-vid
-{
-	object-fit: fill;
+.image {
+  background-size: 100% 100%;
 }

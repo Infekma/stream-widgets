@@ -1,93 +1,134 @@
 // Events will be sent when someone followers
 // Please use event listeners to run functions.
+// NOTE: this does not include GIF - see original documentation
 function isVideoFile(src) {
-  return src.endsWith(".webm");
+	return src.endsWith(".webm") || src.endsWith(".mp4") || src.endsWith(".ogg");
 }
 
-var progressElem = "";
-function setProgressBar(elem, src) {
-  var imgElem = elem + "-img";
-  var vidElem = elem + "-vid";
+function setElementSource(elem, src) {
+	var imgElem = elem + "-img";
+	var vidElem = elem + "-vid";
 
-  if (isVideoFile(src)) {
-    $(vidElem).attr("src", src); 
-    // hide the other child since we're showing an vid instead of img
-    $(imgElem).css("display", "none");
-  } else {
-    $(imgElem).css("background-image", "url("+src+")");  
-    // hide the other child since we're showing an image instead of vid
-    $(vidElem).css("display", "none");
-  }  
+	var isVideoSrc = isVideoFile(src);
+	if (isVideoSrc) {
+		$(vidElem).attr("src", src); 
+		// hide the other child since we're showing an vid instead of img
+		$(imgElem).css("display", "none");
+	} else {
+		$(imgElem).css("background-image", "url("+src+")");  
+		// hide the other child since we're showing an image instead of vid
+		$(vidElem).css("display", "none");
+	}
 }
 
 function initProgressBar(obj) {
-  var backgroundImg = obj.detail.settings.custom_json.customField1.value;
-  //$("#goal-background").css("background-image", "url("+backgroundImg+")");
+	setElementSource("#goal-background", obj.detail.settings.custom_json.customField1.value);
+	setElementSource("#goal-progress", obj.detail.settings.custom_json.customField2.value);
+	var goalTickSrc = obj.detail.settings.custom_json.customField7.value;
+	setElementSource("#goal-tick", goalTickSrc);
+	setElementSource("#goal-finished", obj.detail.settings.custom_json.customField8.value);
   
-  var foregroundImg = obj.detail.settings.custom_json.customField2.value;
-  //$("#goal-progress-img").css("background-image", "url("+foregroundImg+")");
-  setProgressBar("#goal-background", backgroundImg);
-  setProgressBar("#goal-progress", foregroundImg);
-  updateGoalFollowers(obj, false);
+	// if the goal tick is a video, retrieve the video lenth to use as the uptime for the visibility
+	if (isVideoFile(goalTickSrc)) {
+		$("#goal-tick-vid").on('loadedmetadata', function(){
+			tickDurationInSeconds = this.duration;
+		});
+	}
+	
+	updateGoalFollowers(obj, false);
 }
 
-var firstTime = true;
-var updateRate = 10000;
-var currentFollowersUpdate = 0.0;
+function goalFinished() {
+	$("#goal-finished").removeClass("hidden");
+}
+
+var tickDurationInSeconds = 5.0;
+var tickStartTime;
+var isTickEffectVisible = false; // specifies whether the tick effect is visible
+function goalTick() {
+	tickStartTime = new Date();
+	isTickEffectVisible = true;
+	$("#goal-tick").removeClass("hidden");
+}
+
+var firstTime = true; // used to specify first time execution
+var updateRate = 10000; // the update rate to interpolate currentFollowersUpdate
+var currentFollowersUpdate = 0.0; // this value is interpolated towards currentFollowers
 var currentFollowers = 0;
 var targetFollowers = 0;
 function updateGoalFollowers(obj, setUpdatePoint) {
-  currentFollowers = obj.detail.amount.current;
-  targetFollowers = obj.detail.amount.target;
-  if (setUpdatePoint) {
+	// check if the follower has changed, if so show the follower tick effect
+	if (currentFollowers != obj.detail.amount.current && !firstTime) {
+		goalTick();
+	}
+  
+	currentFollowers = obj.detail.amount.current;
+	targetFollowers = obj.detail.amount.target;
+	if (setUpdatePoint) {
 		currentFollowersUpdate = obj.detail.amount.current; 
-  }
+	}
+  
+	// check if the goal is finished, if true make the effect visible
+	if (currentFollowers >= targetFollowers) {
+		goalFinished();
+	}
 }
 
 function updateLoop() {
-  if (currentFollowersUpdate >= currentFollowers && !firstTime) {
-      return;
-  }
-  firstTime = false;
-  currentFollowersUpdate += currentFollowers / updateRate;
+	if (isTickEffectVisible) {
+		// check if the time has elapsed that the tick should be visible for
+		if ( (new Date() - tickStartTime) >= (tickDurationInSeconds * 1000)) {
+			$("#goal-tick").addClass("hidden");
+			isTickEffectVisible = false;
+		}
+	}
+  
+	if (currentFollowersUpdate >= currentFollowers && !firstTime) {
+		return;
+	}
+	firstTime = false;
+	currentFollowersUpdate += currentFollowers / updateRate;
 
-  // the progress bar update uses the container, this is
-  // because we want to crop the contents rather then
-  // scale them.
-  var progressBar = $("#goal-progress-cont");
-  var percentProgress = currentFollowersUpdate / targetFollowers * 100;
-  progressBar.css("width", percentProgress+"%");
+	// the progress bar update uses the container, this is
+	// because we want to crop the contents rather then
+	// scale them.
+	var progressBar = $("#goal-progress-cont");
+	var percentProgress = currentFollowersUpdate / targetFollowers * 100;
+	progressBar.css("width", percentProgress+"%");
 }
 
 document.addEventListener('goalLoad', function(obj) {
-  // obj.detail will contain information about the current goal
-  // this will fire only once when the widget loads
-  console.log(obj.detail);
-  $('#title').html(obj.detail.title);
-  $('#goal-current').text(obj.detail.amount.current);
-  $('#goal-total').text(obj.detail.amount.target);
-  $('#goal-end-date').text(obj.detail.to_go.ends_at);
+	// obj.detail will contain information about the current goal
+	// this will fire only once when the widget loads
+	console.log(obj.detail);
+	$('#title').html(obj.detail.title);
+	$('#goal-current').text(obj.detail.amount.current);
+	$('#goal-total').text(obj.detail.amount.target);
+	$('#goal-end-date').text(obj.detail.to_go.ends_at);
 	initProgressBar(obj);
-  
-  //$(".goal-cont").css("width", window.innerWidth);
-  //$(".goal-cont").css("height", window.innerHeight);
-  $("#goal-progress-img").css("width", window.innerWidth);
- 	$("#goal-progress-img").css("height", window.innerHeight);
-  $("#goal-progress-vid").css("width", window.innerWidth);
+
+	// TODO: should really clean this up
+	$("#goal-progress-img").css("width", window.innerWidth);
+	$("#goal-progress-img").css("height", window.innerHeight);
+	$("#goal-progress-vid").css("width", window.innerWidth);
  	$("#goal-progress-vid").css("height", window.innerHeight);
-  $("#goal-background-img").css("width", window.innerWidth);
+	$("#goal-background-img").css("width", window.innerWidth);
  	$("#goal-background-img").css("height", window.innerHeight);
-  $("#goal-background-vid").css("width", window.innerWidth);
+	$("#goal-background-vid").css("width", window.innerWidth);
  	$("#goal-background-vid").css("height", window.innerHeight);
+	$("#goal-tick-vid").css("width", window.innerWidth);
+ 	$("#goal-tick-img").css("height", window.innerHeight);
+	$("#goal-finished-vid").css("width", window.innerWidth);
+ 	$("#goal-finished-img").css("height", window.innerHeight);
   
-  $("#title").text(obj.detail.settings.custom_json.customField3.value);
-  $("#info-cont").css("transform", "translate(0, "+obj.detail.settings.custom_json.customField6.value+"px");
+	$("#title").text(obj.detail.settings.custom_json.customField3.value);
+	$("#info-cont").css("transform", "translate(0, "+obj.detail.settings.custom_json.customField6.value+"px");
   
-  // set text-related styling
-   $(".text").css("color", obj.detail.settings.custom_json.customField4.value);
-   var textOutlineColour = obj.detail.settings.custom_json.customField5.value;
-   $(".text").css("text-shadow", "-1px -1px 0 "+textOutlineColour+", 1px -1px 0 "+textOutlineColour+", -1px 1px 0 "+textOutlineColour+", 1px 1px 0 "+textOutlineColour+"");
-	 $(".text").css("font-family", obj.detail.settings.font);
+	// set text-related styling
+	$(".text").css("color", obj.detail.settings.custom_json.customField4.value);
+	var textOutlineColour = obj.detail.settings.custom_json.customField5.value;
+	$(".text").css("text-shadow", "-1px -1px 0 "+textOutlineColour+", 1px -1px 0 "+textOutlineColour+", -1px 1px 0 "+textOutlineColour+", 1px 1px 0 "+textOutlineColour+"");
+	$(".text").css("font-family", obj.detail.settings.font);
 
 	updateGoalFollowers(obj, true);
 
@@ -96,8 +137,8 @@ document.addEventListener('goalLoad', function(obj) {
 });
 
 document.addEventListener('goalEvent', function(obj) {
-  // obj.detail will contain information about the goal
-  console.log(obj.detail);
-  $('#goal-current').text(obj.detail.amount.current);
-  updateGoalFollowers(obj, false);
+	// obj.detail will contain information about the goal
+	console.log(obj.detail);
+	$('#goal-current').text(obj.detail.amount.current);
+	updateGoalFollowers(obj, false);
 });
