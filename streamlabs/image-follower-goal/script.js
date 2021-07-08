@@ -21,20 +21,29 @@ function setElementSource(elem, src) {
 	}
 }
 
+function hasSpecifiedSrc(value) {
+  return value !== undefined;
+}
+
+var hasTickEffect = false;
+var hasFinishEffect = false;
 function initProgressBar(obj) {
 	setElementSource("#goal-background", obj.detail.settings.custom_json.customField1.value);
 	setElementSource("#goal-progress", obj.detail.settings.custom_json.customField2.value);
-	var goalTickSrc = obj.detail.settings.custom_json.customField7.value;
-	setElementSource("#goal-tick", goalTickSrc);
-	setElementSource("#goal-finished", obj.detail.settings.custom_json.customField8.value);
-  
+	var tickEffectSrc = obj.detail.settings.custom_json.customField7.value;
+  hasTickEffect = hasSpecifiedSrc(finishEffectSrc);
+	setElementSource("#goal-tick", tickEffectSrc);
+  var finishEffectSrc = obj.detail.settings.custom_json.customField8.value;
+  hasFinishEffect = hasSpecifiedSrc(finishEffectSrc);
+	setElementSource("#goal-finished", finishEffectSrc);
+
 	// if the goal tick is a video, retrieve the video lenth to use as the uptime for the visibility
-	if (isVideoFile(goalTickSrc)) {
+	if (isVideoFile(tickEffectSrc) && hasTickEffect) {
 		$("#goal-tick-vid").on('loadedmetadata', function(){
 			tickDurationInSeconds = this.duration;
 		});
 	}
-	
+
 	updateGoalFollowers(obj, false);
 }
 
@@ -58,31 +67,31 @@ var currentFollowers = 0;
 var targetFollowers = 0;
 function updateGoalFollowers(obj, setUpdatePoint) {
 	// check if the follower has changed, if so show the follower tick effect
-	if (currentFollowers != obj.detail.amount.current && !firstTime) {
+	if (currentFollowers != obj.detail.amount.current && !firstTime && hasTickEffect) {
 		goalTick();
 	}
-  
+
 	currentFollowers = obj.detail.amount.current;
 	targetFollowers = obj.detail.amount.target;
 	if (setUpdatePoint) {
 		currentFollowersUpdate = obj.detail.amount.current; 
 	}
-  
+
 	// check if the goal is finished, if true make the effect visible
-	if (currentFollowers >= targetFollowers) {
+	if (currentFollowers >= targetFollowers && hasFinishEffect) {
 		goalFinished();
 	}
 }
 
 function updateLoop() {
-	if (isTickEffectVisible) {
+	if (isTickEffectVisible && hasTickEffect) {
 		// check if the time has elapsed that the tick should be visible for
 		if ( (new Date() - tickStartTime) >= (tickDurationInSeconds * 1000)) {
 			$("#goal-tick").addClass("hidden");
 			isTickEffectVisible = false;
 		}
 	}
-  
+
 	if (currentFollowersUpdate >= currentFollowers && !firstTime) {
 		return;
 	}
@@ -119,15 +128,15 @@ document.addEventListener('goalLoad', function(obj) {
     $("#goal-finished-vid"),
     $("#goal-finished-img"),
   ];
-  
+
   elementsToSetHeightAndWidthFor.forEach(element => {
     element.css("height", window.innerHeight);
     element.css("width", window.innerWidth);
   });
-  
+
 	$("#title").text(obj.detail.settings.custom_json.customField3.value);
 	$("#info-cont").css("transform", "translate(0, "+obj.detail.settings.custom_json.customField6.value+"px");
-  
+
 	// set text-related styling
 	$(".text").css("color", obj.detail.settings.custom_json.customField4.value);
 	var textOutlineColour = obj.detail.settings.custom_json.customField5.value;
