@@ -1,32 +1,42 @@
 {
-	"customField1": {
-		"label": "Background Image",
-		"type": "image-input",
-		"value": ""
-	},
-	"customField2": {
-		"label": "Foreground Image",
-		"type": "image-input",
-		"value": ""
-	},
-	"customField3": {
-		"label": "Goal Title",
-		"type": "textfield",
-		"value": "Follower Goal"
-	},
-	"customField4": {
-		"label": "Text Colour",
-		"type": "colorpicker",
-		"value": "#000000"
-	},
-	"customField5": {
-		"label": "Text Border",
-		"type": "colorpicker",
-		"value": "#FFFFFF"
-	},
-	"customField6": {
-		"label": "Text Vertical Offset (in pixels)",
-		"type": "textfield",
-		"value": "0"
-	},
+    "customField1": {
+        "label": "Background Image",
+        "type": "image-input",
+        "value": "https://uploads.twitchalerts.com/000/030/960/561/progress_bar_background_1080P.png"
+    },
+    "customField2": {
+        "label": "Foreground Image",
+        "type": "image-input",
+        "value": "https://uploads.twitchalerts.com/000/030/960/561/possible_animation.webm"
+    },
+    "customField3": {
+        "label": "Goal Title",
+        "type": "textfield",
+        "value": "Follower Goal"
+    },
+    "customField4": {
+        "label": "Text Colour",
+        "type": "colorpicker",
+        "value": "#FFFFFF"
+    },
+    "customField5": {
+        "label": "Text Border",
+        "type": "colorpicker",
+        "value": "#000000"
+    },
+    "customField6": {
+        "label": "Text Vertical Offset (in pixels)",
+        "type": "textfield",
+        "value": "0"
+    },
+    "customField7": {
+        "label": "Update Effect",
+        "type": "image-input",
+        "value": "https://uploads.twitchalerts.com/image-defaults/GGPeRhn.gif"
+    },
+    "customField8": {
+        "label": "Completion Effect",
+        "type": "image-input",
+        "value": "https://uploads.twitchalerts.com/image-defaults/FSIAV2u.gif"
+    },
 }
