@@ -107,19 +107,23 @@ document.addEventListener('goalLoad', function(obj) {
 	$('#goal-end-date').text(obj.detail.to_go.ends_at);
 	initProgressBar(obj);
 
-	// TODO: should really clean this up
-	$("#goal-progress-img").css("width", window.innerWidth);
-	$("#goal-progress-img").css("height", window.innerHeight);
-	$("#goal-progress-vid").css("width", window.innerWidth);
- 	$("#goal-progress-vid").css("height", window.innerHeight);
-	$("#goal-background-img").css("width", window.innerWidth);
- 	$("#goal-background-img").css("height", window.innerHeight);
-	$("#goal-background-vid").css("width", window.innerWidth);
- 	$("#goal-background-vid").css("height", window.innerHeight);
-	$("#goal-tick-vid").css("width", window.innerWidth);
- 	$("#goal-tick-img").css("height", window.innerHeight);
-	$("#goal-finished-vid").css("width", window.innerWidth);
- 	$("#goal-finished-img").css("height", window.innerHeight);
+	// for every element in this array, set the width/height
+  // to that of the window
+  var elementsToSetHeightAndWidthFor = [
+    $("#goal-progress-img"),
+    $("#goal-progress-vid"),
+    $("#goal-background-img"),
+    $("#goal-background-vid"),
+    $("#goal-tick-vid"),
+    $("#goal-tick-img"),
+    $("#goal-finished-vid"),
+    $("#goal-finished-img"),
+  ];
+  
+  elementsToSetHeightAndWidthFor.forEach(element => {
+    element.css("height", window.innerHeight);
+    element.css("width", window.innerWidth);
+  });
   
 	$("#title").text(obj.detail.settings.custom_json.customField3.value);
 	$("#info-cont").css("transform", "translate(0, "+obj.detail.settings.custom_json.customField6.value+"px");
