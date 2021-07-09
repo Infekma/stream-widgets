@@ -1,3 +1,10 @@
+// Get the linear interpolation between two value
+function lerp(value1, value2, amount) {
+    amount = amount < 0 ? 0 : amount;
+    amount = amount > 1 ? 1 : amount;
+    return value1 + (value2 - value1) * amount;
+}
+
 // Events will be sent when someone followers
 // Please use event listeners to run functions.
 // NOTE: this does not include GIF - see original documentation
@@ -61,10 +68,9 @@ function goalTick() {
 }
 
 var firstTime = true; // used to specify first time execution
-var updateRate = 10000; // the update rate to interpolate currentFollowersUpdate
 var currentFollowersUpdate = 0.0; // this value is interpolated towards currentFollowers
-var currentFollowers = 0;
-var targetFollowers = 0;
+var currentFollowers = 0.0;
+var targetFollowers = 0.0;
 function updateGoalFollowers(obj, setUpdatePoint) {
 	// check if the follower has changed, if so show the follower tick effect
 	if (currentFollowers != obj.detail.amount.current && !firstTime && hasTickEffect) {
@@ -96,7 +102,14 @@ function updateLoop() {
 		return;
 	}
 	firstTime = false;
-	currentFollowersUpdate += currentFollowers / updateRate;
+  
+	currentFollowersUpdate = lerp(currentFollowersUpdate, currentFollowers, 0.5 * (1/60));
+
+  // limit the interpolation to stop at epsilon
+  if (currentFollowers - currentFollowersUpdate <= 0.01) {
+    currentFollowersUpdate = currentFollowers;
+  }
+  
 
 	// the progress bar update uses the container, this is
 	// because we want to crop the contents rather then
