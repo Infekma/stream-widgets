@@ -31,7 +31,7 @@ function initProgressBar(obj) {
 	setElementSource("#goal-background", obj.detail.settings.custom_json.customField1.value);
 	setElementSource("#goal-progress", obj.detail.settings.custom_json.customField2.value);
 	var tickEffectSrc = obj.detail.settings.custom_json.customField7.value;
-  hasTickEffect = hasSpecifiedSrc(finishEffectSrc);
+  hasTickEffect = hasSpecifiedSrc(tickEffectSrc);
 	setElementSource("#goal-tick", tickEffectSrc);
   var finishEffectSrc = obj.detail.settings.custom_json.customField8.value;
   hasFinishEffect = hasSpecifiedSrc(finishEffectSrc);
