@@ -1,0 +1,88 @@
+/* this is the styling used for the text */
+#text-title, #text-description {
+    color: white;
+    text-align: center;
+    -webkit-text-stroke: 0.01em black;
+    font-family: 'Courier New', monospace;
+}
+
+#text-title {
+    font-size: 3vw;
+    font-weight: bold;
+}
+
+#text-description {
+    font-size: 1.5vw;
+    letter-spacing: 0.1vw;
+}
+
+/* end of text styles */
+
+#title-container {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+
+    max-width: 30%;
+    height: auto;
+
+    display: flex;
+    flex-direction: column;
+    background-color: rgba(0,0,0,0.5);
+    padding: 1vw;
+}
+
+html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    width: 100%;
+    background-color: black;
+}
+
+#flex-wrapper {
+    position: relative;
+    display: flex;
+    height: 100%;
+    width: 100%;
+}
+
+.container {
+    position: relative;
+    height: 100%;
+    width: 50%;
+    overflow: hidden;
+}
+
+.mirror {
+    -moz-transform: scaleX(-1);
+    -o-transform: scaleX(-1);
+    -webkit-transform: scaleX(-1);
+    transform: scaleX(-1);
+    filter: Fliph;
+    -ms-filter: "FlipH";
+}
+
+.sliding-background {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+
+    background-repeat: repeat-x;
+    background-size: auto 100%;
+    background-position: 0 0;
+}
+
+.adjacent {
+    right: -100%;
+}
+
+@keyframes slide {
+    from {
+        background-position: 0 0;
+    }
+    to {
+        background-position: -100% 0;
+    }
+}
