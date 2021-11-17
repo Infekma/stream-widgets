@@ -18,7 +18,7 @@ const CONFIG = {
     
 
     // in seconds how long the animation should last to scroll from 0%->100% of the image
-    animationSpeed: 10,
+    animationSpeed: 40,
 
 
     // the speed of the transition fading between images 

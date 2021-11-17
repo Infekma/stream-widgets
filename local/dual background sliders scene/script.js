@@ -1,13 +1,21 @@
 let currentImageId = 0;
 
 // this function sets the slide animation for the given dom at the specified speed
-function setSlideAnimation() {
+function setSlideAnimation(callback = null) {
+    var count = 0;
     listOfImageDoms.forEach(function(dom){
         let domQuery = $("#"+dom);
-        const cssVal = "slide "+CONFIG.animationSpeed+"s linear infinite reverse";
-        const cssKey = "animation";
-        // set the animation key and value for the given dom item
-        domQuery.css(cssKey, cssVal);
+        domQuery.animate(
+            {backgroundPositionX: "+=100%"},
+            CONFIG.animationSpeed * 1000,
+            "linear",
+            function() { 
+                if (count == 0) {
+                    callback();
+                };
+                count+=1;
+            }
+        );
     });
 };
 
@@ -21,8 +29,12 @@ function setSlidingImage(image, firstTime = false) {
             domQuery.css("background-image", "url("+image+")")
         } else {
             // fade out the transition from current image src to the next
-            domQuery.fadeOut(CONFIG.fadeTransitionSpeed, function() {
-                domQuery.css("background-image", "url("+image+")").fadeIn(CONFIG.fadeTransitionSpeed);
+            domQuery.fadeOut({
+                queue: false, 
+                duration: CONFIG.fadeTransitionSpeed, 
+                done: function() {
+                    domQuery.css("background-image", "url("+image+")").fadeIn({queue: false, duration: CONFIG.fadeTransitionSpeed});
+                }
             });
         }
     });
@@ -41,6 +53,16 @@ function setTitleAndDescriptionText() {
     $("#text-description").text(CONFIG.description);
 }
 
+function update() {
+    console.log("updating to next slide image");
+    currentImageId+=1;
+    if (currentImageId >= CONFIG.images.length) {
+        currentImageId = 0;
+    }
+    setSlidingImage(CONFIG.images[currentImageId]);
+    setSlideAnimation(update);
+}
+
 $(document).ready(function() {
     // set the text
     setTitleAndDescriptionText();
@@ -50,16 +72,6 @@ $(document).ready(function() {
 
     // set the animations
     listOfImageDoms.forEach(function(dom){
-        setSlideAnimation(dom, CONFIG.animationSpeed);
+        setSlideAnimation(update);
     });
-    
-    // start the update timer
-    window.setInterval(function(){
-        console.log("updating to next slide image");
-        currentImageId+=1;
-        if (currentImageId >= CONFIG.images.length) {
-            currentImageId = 0;
-        }
-        setSlidingImage(CONFIG.images[currentImageId]);
-    }, CONFIG.animationSpeed * 1000);
 });
